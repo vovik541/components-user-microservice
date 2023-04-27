@@ -6,6 +6,7 @@ import com.microservice.user.entity.dto.BookDTO;
 import com.microservice.user.mapper.BookMapper;
 import com.microservice.user.mapper.UserMapper;
 import com.microservice.user.repository.UserRepository;
+import com.microservice.user.request.GetBookRequest;
 import com.microservice.user.response.BooksListResponse;
 import com.microservice.user.response.UsersListResponse;
 import com.microservice.user.service.BookService;
@@ -20,6 +21,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/v1")
 public class ReaderController {
     private final ReaderService readerService;
     private final BookService bookService;
@@ -46,13 +48,21 @@ public class ReaderController {
         return new BooksListResponse(bookMapper.booksToBookDTOs(books));
     }
 
-    @PostMapping("/take_book/{id}")
-    public @ResponseBody void updateBook(@PathVariable("id") Long bookId, String userName) {
-        User user = userRepository.findByLogin(userName);
-        Book book = bookService.getById(bookId).get();
+    @PostMapping("/take_book")
+    public @ResponseBody BookDTO updateBook(@RequestBody GetBookRequest request) {
+        User user = userRepository.findByLogin(request.getUserName());
+        Book book = bookService.getById(request.getId()).get();
         book.setUserId(user.getId());
         book.setBooked(true);
         bookService.updateBook(book);
+
+        return bookMapper.bookToBookDTO(book);
+    }
+
+    @GetMapping("/get_book")
+    public @ResponseBody BookDTO get_book(@RequestBody GetBookRequest request) {
+        Book book = bookService.getById(request.getId()).get();
+        return bookMapper.bookToBookDTO(book);
     }
 
     @PostMapping("/give_back/{id}")
