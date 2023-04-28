@@ -22,7 +22,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/v1")
+@RequestMapping("/api/v1")
 public class ReaderController {
     private final ReaderService readerService;
     private final BookService bookService;
