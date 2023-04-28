@@ -11,6 +11,7 @@ import com.microservice.user.response.BooksListResponse;
 import com.microservice.user.response.UsersListResponse;
 import com.microservice.user.service.BookService;
 import com.microservice.user.service.ReaderService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,24 +31,25 @@ public class ReaderController {
 
     private final BookMapper bookMapper;
     private final UserMapper userMapper;
+    @Operation(summary = "Get books reserved by user")
     @GetMapping("/profile/{id}")
     public @ResponseBody BooksListResponse readerMainPage(@PathVariable("id") Long userId) {
         List<Book> books = bookService.getBooksByUserId(userId);
         return new BooksListResponse(bookMapper.booksToBookDTOs(books));
     }
-
+    @Operation(summary = "Get books by name")
     @GetMapping("/search/{name}")
     public @ResponseBody BooksListResponse findBookPage(@PathVariable("name") String name) {
         List<BookDTO> books = bookMapper.booksToBookDTOs(bookService.getAllByName(name));
         return new BooksListResponse(books);
     }
-
+    @Operation(summary = "Get all not reserved books")
     @GetMapping("/find")
     public @ResponseBody BooksListResponse findBookPage() {
         List<Book> books = bookService.getAllAccessibleBooks();
         return new BooksListResponse(bookMapper.booksToBookDTOs(books));
     }
-
+    @Operation(summary = "Order book for specific user")
     @PostMapping("/take_book")
     public @ResponseBody BookDTO updateBook(@RequestBody GetBookRequest request) {
         User user = userRepository.findByLogin(request.getUserName());
@@ -58,13 +60,13 @@ public class ReaderController {
 
         return bookMapper.bookToBookDTO(book);
     }
-
+    @Operation(summary = "Get book by id")
     @GetMapping("/get_book")
     public @ResponseBody BookDTO get_book(@RequestBody GetBookRequest request) {
         Book book = bookService.getById(request.getId()).get();
         return bookMapper.bookToBookDTO(book);
     }
-
+    @Operation(summary = "Return book to library")
     @PostMapping("/give_back/{id}")
     public @ResponseBody void deleteBook(@PathVariable(name = "id") Long id) {
         Book book = bookService.getById(id).get();
@@ -72,31 +74,31 @@ public class ReaderController {
         book.setUserId(null);
         bookService.updateBook(book);
     }
-
+    @Operation(summary = "Get all readers list")
     @GetMapping("/all")
     public @ResponseBody UsersListResponse getAllReaders() {
         List<User> allReaders = readerService.findAllReaders();
         return new UsersListResponse(userMapper.usersToUserDTOs(allReaders));
     }
-
+    @Operation(summary = "Get user by id")
     @GetMapping("find/{id}")
     public @ResponseBody ResponseEntity<User> getReaderById(@PathVariable("id") Long id) {
         User user = readerService.findReaderById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
-
+    @Operation(summary = "Add new reader")
     @PostMapping("/add")
     public @ResponseBody ResponseEntity<User> addReader(@RequestBody User user) {
         User newUser = readerService.addReader(user);
         return new ResponseEntity<>(newUser, HttpStatus.OK);
     }
-
+    @Operation(summary = "Update employee")
     @PutMapping("/update")
     public @ResponseBody ResponseEntity<User> updateEmployee(@RequestBody User employee) {
         User updateEmployee = readerService.updateReader(employee);
         return new ResponseEntity<>(updateEmployee, HttpStatus.OK);
     }
-
+    @Operation(summary = "Delete reader from book")
     @DeleteMapping("/delete/{id}")
     public @ResponseBody ResponseEntity<?> deleteReader(@PathVariable("id") Long id) {
         readerService.deleteReader(id);
