@@ -22,7 +22,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/readers")
 public class ReaderController {
     private final ReaderService readerService;
     private final BookService bookService;
@@ -38,13 +38,13 @@ public class ReaderController {
         return new BooksListResponse(bookMapper.booksToBookDTOs(books));
     }
     @Operation(summary = "Get books by name")
-    @GetMapping("/search/{name}")
+    @GetMapping("/searchBook/{name}")
     public @ResponseBody BooksListResponse findBookPage(@PathVariable("name") String name) {
         List<BookDTO> books = bookMapper.booksToBookDTOs(bookService.getAllByName(name));
         return new BooksListResponse(books);
     }
     @Operation(summary = "Get all not reserved books")
-    @GetMapping("/find")
+    @GetMapping("/findBook")
     public @ResponseBody BooksListResponse findBookPage() {
         List<Book> books = bookService.getAllAccessibleBooks();
         return new BooksListResponse(bookMapper.booksToBookDTOs(books));
@@ -67,7 +67,7 @@ public class ReaderController {
         return bookMapper.bookToBookDTO(book);
     }
     @Operation(summary = "Return book to library")
-    @PostMapping("/giveBack/{id}")
+    @PostMapping("/giveBackBook/{id}")
     public @ResponseBody void deleteBook(@PathVariable(name = "id") Long id) {
         Book book = bookService.getById(id).get();
         book.setBooked(false);
@@ -81,25 +81,25 @@ public class ReaderController {
         return new UsersListResponse(userMapper.usersToUserDTOs(allReaders));
     }
     @Operation(summary = "Get user by id")
-    @GetMapping("find/{id}")
+    @GetMapping("findBook/{id}")
     public @ResponseBody ResponseEntity<User> getReaderById(@PathVariable("id") Long id) {
         User user = readerService.findReaderById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
     @Operation(summary = "Add new reader")
-    @PostMapping("/add")
+    @PostMapping("/addBook")
     public @ResponseBody ResponseEntity<User> addReader(@RequestBody User user) {
         User newUser = readerService.addReader(user);
         return new ResponseEntity<>(newUser, HttpStatus.OK);
     }
     @Operation(summary = "Update employee")
-    @PutMapping("/update")
+    @PutMapping("/updateBook")
     public @ResponseBody ResponseEntity<User> updateEmployee(@RequestBody User employee) {
         User updateEmployee = readerService.updateReader(employee);
         return new ResponseEntity<>(updateEmployee, HttpStatus.OK);
     }
     @Operation(summary = "Delete reader from book")
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/deleteBook/{id}")
     public @ResponseBody ResponseEntity<?> deleteReader(@PathVariable("id") Long id) {
         readerService.deleteReader(id);
         return new ResponseEntity<>(HttpStatus.OK);
