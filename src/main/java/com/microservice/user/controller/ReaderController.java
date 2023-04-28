@@ -50,7 +50,7 @@ public class ReaderController {
         return new BooksListResponse(bookMapper.booksToBookDTOs(books));
     }
     @Operation(summary = "Order book for specific user")
-    @PostMapping("/take_book")
+    @PostMapping("/takeBook")
     public @ResponseBody BookDTO updateBook(@RequestBody GetBookRequest request) {
         User user = userRepository.findByLogin(request.getUserName());
         Book book = bookService.getById(request.getId()).get();
@@ -61,13 +61,13 @@ public class ReaderController {
         return bookMapper.bookToBookDTO(book);
     }
     @Operation(summary = "Get book by id")
-    @GetMapping("/get_book")
+    @GetMapping("/getBook")
     public @ResponseBody BookDTO get_book(@RequestBody GetBookRequest request) {
         Book book = bookService.getById(request.getId()).get();
         return bookMapper.bookToBookDTO(book);
     }
     @Operation(summary = "Return book to library")
-    @PostMapping("/give_back/{id}")
+    @PostMapping("/giveBack/{id}")
     public @ResponseBody void deleteBook(@PathVariable(name = "id") Long id) {
         Book book = bookService.getById(id).get();
         book.setBooked(false);
